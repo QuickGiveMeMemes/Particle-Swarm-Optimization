@@ -7,6 +7,7 @@ import java.util.Random;
  */
 class Particle {
 
+    private int dimensionNum;
     private Vector position;        // Current position.
     private Vector velocity;
     private Vector bestPosition;    // Personal best solution.
@@ -18,13 +19,14 @@ class Particle {
      * @param beginRange    the minimum xyz values of the position (inclusive)
      * @param endRange      the maximum xyz values of the position (exclusive)
      */
-    Particle (FunctionType function, int beginRange, int endRange) {
+    Particle (FunctionType function, int dimensionNum, int beginRange, int endRange) {
         if (beginRange >= endRange) {
             throw new IllegalArgumentException("Begin range must be less than end range.");
         }
         this.function = function;
-        position = new Vector();
-        velocity = new Vector();
+        this.dimensionNum = dimensionNum;
+        position = new Vector(dimensionNum);
+        velocity = new Vector(dimensionNum);
         setRandomPosition(beginRange, endRange);
         bestPosition = velocity.clone();
         bestEval = eval();
@@ -34,23 +36,30 @@ class Particle {
      * The evaluation of the current position.
      * @return      the evaluation
      */
-    private double eval () {
+    private double eval () { //TODO this is hardcoded right now, can generalize later
+        
+        double[] positionArr = position.getDimensions();
+
         if (function == FunctionType.FunctionA) {
-            return Function.functionA(position.getX());
+            return Function.functionA(positionArr[0]);
         } else if (function == FunctionType.Ackleys) {
-            return Function.ackleysFunction(position.getX(), position.getY());
+            return Function.ackleysFunction(positionArr[0], positionArr[1]);
         } else if (function == FunctionType.Booths) {
-            return Function.boothsFunction(position.getX(), position.getY());
+            return Function.boothsFunction(positionArr[0], positionArr[1]);
         } else {
-            return Function.threeHumpCamelFunction(position.getX(), position.getY());
+            return Function.threeHumpCamelFunction(positionArr[0], positionArr[1]);
         }
     }
 
     private void setRandomPosition (int beginRange, int endRange) {
-        int x = rand(beginRange, endRange);
-        int y = rand(beginRange, endRange);
-        int z = rand(beginRange, endRange);
-        position.set(x, y, z);
+        double[] placeholderArr = new double[dimensionNum];
+
+        for(int i = 0; i < dimensionNum; i++) {
+            placeholderArr[i] = rand(beginRange, endRange);
+        }
+
+
+        position.set(placeholderArr);
     }
 
     /**

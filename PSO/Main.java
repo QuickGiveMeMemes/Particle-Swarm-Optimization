@@ -21,10 +21,11 @@ public class Main {
     private static void menu (boolean flag) {
         Swarm swarm;
         Particle.FunctionType function;
-        int particles, epochs;
+        int particles, epochs, dimensionNumber;
         double inertia, cognitive, social;
 
         function = getFunction();
+        dimensionNumber = getUserInt("Dimensions: ");
         particles = getUserInt("Particles: ");
         epochs = getUserInt("Epochs:    ");
 
@@ -32,9 +33,9 @@ public class Main {
             inertia = getUserDouble("Inertia:   ");
             cognitive = getUserDouble("Cognitive: ");
             social = getUserDouble("Social:    ");
-            swarm = new Swarm(function, particles, epochs, inertia, cognitive, social);
+            swarm = new Swarm(function, dimensionNumber, particles, epochs, inertia, cognitive, social);
         } else {
-            swarm = new Swarm(function, particles, epochs);
+            swarm = new Swarm(function, dimensionNumber, particles, epochs);
 
         }
 

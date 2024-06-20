@@ -9,7 +9,7 @@ import PSO.Particle.FunctionType;
  */
 public class Swarm {
 
-    private int numOfParticles, epochs;
+    private int numOfParticles, epochs, dimensionNum;
     private double inertia, cognitiveComponent, socialComponent;
     private Vector bestPosition;
     private double bestEval;
@@ -33,8 +33,8 @@ public class Swarm {
      * @param particles     the number of particles to create
      * @param epochs        the number of generations
      */
-    public Swarm (FunctionType function, int particles, int epochs) {
-        this(function, particles, epochs, DEFAULT_INERTIA, DEFAULT_COGNITIVE, DEFAULT_SOCIAL);
+    public Swarm (FunctionType function, int dimensionNum, int particles, int epochs) {
+        this(function, dimensionNum, particles, epochs, DEFAULT_INERTIA, DEFAULT_COGNITIVE, DEFAULT_SOCIAL);
     }
 
     /**
@@ -45,15 +45,22 @@ public class Swarm {
      * @param cognitive     the cognitive component or introversion of the particle
      * @param social        the social component or extroversion of the particle
      */
-    public Swarm (FunctionType function, int particles, int epochs, double inertia, double cognitive, double social) {
+    public Swarm (FunctionType function, int dimensionNum, int particles, int epochs, double inertia, double cognitive, double social) {
         this.numOfParticles = particles;
+        this.dimensionNum = dimensionNum;
         this.epochs = epochs;
         this.inertia = inertia;
         this.cognitiveComponent = cognitive;
         this.socialComponent = social;
         this.function = function;
         double infinity = Double.POSITIVE_INFINITY;
-        bestPosition = new Vector(infinity, infinity, infinity);
+
+        double[] placeholderArr = new double[dimensionNum];
+
+        for (int i = 0; i < dimensionNum; i++) { //TODO theres probably a better way to do this
+            placeholderArr[i] = infinity;
+        }
+        bestPosition = new Vector(placeholderArr);
         bestEval = Double.POSITIVE_INFINITY;
         beginRange = DEFAULT_BEGIN_RANGE;
         endRange = DEFAULT_END_RANGE;
@@ -88,10 +95,7 @@ public class Swarm {
         }
 
         System.out.println("---------------------------RESULT---------------------------");
-        System.out.println("x = " + bestPosition.getX());
-        if (function != FunctionType.FunctionA) {
-            System.out.println("y = " + bestPosition.getY());
-        }
+        System.out.println(bestPosition.toString());
         System.out.println("Final Best Evaluation: " + bestEval);
         System.out.println("---------------------------COMPLETE-------------------------");
 
@@ -104,7 +108,7 @@ public class Swarm {
     private Particle[] initialize () {
         Particle[] particles = new Particle[numOfParticles];
         for (int i = 0; i < numOfParticles; i++) {
-            Particle particle = new Particle(function, beginRange, endRange);
+            Particle particle = new Particle(function, dimensionNum, beginRange, endRange);
             particles[i] = particle;
             updateGlobalBest(particle);
         }
